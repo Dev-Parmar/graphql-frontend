@@ -11,11 +11,11 @@ query getAllUsers{
 }
 `
 
-const QUERY_FIND_USER = gql`
-query User($id:ID!){
-  user(id:$id) {
-    id
+const QUERY_FIND_MOVIE = gql`
+query Movie($name:String!){
+  movie(name:$name) {
     name
+    realeaseYear
   }
 }
 `
@@ -30,11 +30,11 @@ query getAllMovies{
 
 function DisplayData() {
 
-  const [searchUser, setSearchUser] = useState("")
+  const [searchMovie, setSearchMovie] = useState("")
 
   const us = useQuery(QUERY_ALL_USERS)
   const mo = useQuery(QUERY_ALL_MOVIES)
-  const [fetchUser, userFound] = useLazyQuery(QUERY_FIND_USER)
+  const [fetchMovie, movieFound] = useLazyQuery(QUERY_FIND_MOVIE)
 
 
   return (
@@ -55,13 +55,19 @@ function DisplayData() {
       </ul>
       <br />
       <h1>Search for users:</h1>
-      <input type='text' placeholder='Enter the username...' onChange={(e) => setSearchUser(e.target.value)} />
-      <button onClick={() => { fetchUser({ variables: { id: searchUser } }) }}>Search</button>
+      <input type='text' placeholder='Enter the movie name...' onChange={(e) => setSearchMovie(e.target.value)} />
+      <button onClick={() => { fetchMovie({ variables: { name: searchMovie } }) }}>Search</button>
       <div>
-        {userFound.data && (
+        {movieFound.data && (
           <div>
-            <h3>Id: {userFound.data.user.id}</h3>
-            <h3>Name:{userFound.data.user.name}</h3>
+            <h3>Name:{movieFound.data.movie.name}</h3>
+            {console.log(movieFound.data)}
+            <h3>Year Released:{movieFound.data.movie.realeaseYear}</h3>
+          </div>
+        )}
+        {movieFound.error && (
+          <div>
+            <h3>No movies found!</h3>
           </div>
         )}
       </div>
